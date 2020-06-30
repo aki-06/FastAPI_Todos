@@ -1,0 +1,28 @@
+version: "3"
+
+volumes:
+  dbdata:
+
+services:
+  api:
+    build: ./api
+    container_name: todo_api
+    command: uvicorn main:app --host ${api_host} --port ${api_port} --reload
+    volumes:
+      - ./api/src:/src
+    ports:
+      - "${api_port}:${api_port}"
+    depends_on:
+      - db
+  db:
+    image: postgres:11
+    restart: always
+    container_name: todo_db
+    ports:
+      - "${db_port}:${db_port}"
+    volumes:
+      - "dbdata:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: ${postgres_db}
+      POSTGRES_USER: ${postgres_user}
+      POSTGRES_PASSWORD: ${postgres_password}
