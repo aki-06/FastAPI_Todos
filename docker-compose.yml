@@ -13,14 +13,26 @@ services:
     ports:
       - "${api_port}:${api_port}"
     depends_on:
-      - db
-  db:
+      - mongodb
+  mongodb:
     image: mongo:latest
+    container_name: mongodb
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGODB_USER: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGODB_PASS: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongo_data:/data/db
     ports:
       - "${DB_PORT}:${DB_PORT}"
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    links:
+      - 'mongodb:mongo'
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
