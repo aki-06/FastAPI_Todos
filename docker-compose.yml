@@ -1,7 +1,7 @@
 version: "3"
 
 volumes:
-  dbdata:
+  mongo_data:
 
 services:
   api:
@@ -15,14 +15,12 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:11
+    image: mongo:latest
     restart: always
-    container_name: todo_db
-    ports:
-      - "${db_port}:${db_port}"
-    volumes:
-      - "dbdata:/var/lib/postgresql/data"
     environment:
-      POSTGRES_DB: ${postgres_db}
-      POSTGRES_USER: ${postgres_user}
-      POSTGRES_PASSWORD: ${postgres_password}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
